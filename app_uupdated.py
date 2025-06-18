@@ -55,33 +55,30 @@ if uploaded_file:
         with col3:
             if 'الدائرة' in df.columns:
                 dept_counts = df['الدائرة'].value_counts()
+                values = dept_counts.values
+                labels = dept_counts.index
 
-                # النص داخل الدائرة: فقط اسم الدائرة
-                text_values = dept_counts.index
+                # تجهيز النص داخل الرسم
+                text_labels = labels
 
-                # النص في الشرح الجانبي (Legend): اسم الدائرة + العدد
-                legend_labels = []
-                for dept_code, count in zip(dept_counts.index, dept_counts.values):
-                    full_name = df[df['الدائرة'] == dept_code]['الدائرة'].iloc[0]  # نفس الاسم بالعربي
-                    legend_labels.append(f"{full_name} | {dept_code} | {count} موظف")
+                # تجهيز النص في الشرح الجانبي
+                legend_text = [f"{df[df['الدائرة'] == code]['الدائرة'].iloc[0]} | {code} | {count} موظف"
+                               for code, count in zip(labels, values)]
 
-
-                fig_dept = go.Figure(data=[go.Pie(
-                    labels=legend_labels,
-                    values=dept_counts.values,
-                    hole=0.4,
-                    text=text_values,
+                fig = go.Figure(data=[go.Pie(
+                    labels=legend_text,
+                    values=values,
+                    text=text_labels,
                     textinfo='text+percent',
                     textposition='outside',
-                    insidetextorientation='radial',
                     marker=dict(colors=px.colors.sequential.Blues[::-1])
                 )])
 
-                fig_dept.update_layout(
+                fig.update_layout(
                     title='نسبة الموظفين حسب الدائرة',
                     title_x=0.5,
-                    showlegend=True,
-                    legend_font_size=12
+                    legend_font_size=13,
+                    showlegend=True
                 )
 
-                st.plotly_chart(fig_dept, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
