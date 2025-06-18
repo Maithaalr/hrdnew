@@ -60,7 +60,11 @@ if uploaded_file:
                 text_values = dept_counts.index
 
                 # النص في الشرح الجانبي (Legend): اسم الدائرة + العدد
-                legend_labels = [f"{dept} | {count} موظف" for dept, count in zip(dept_counts.index, dept_counts.values)]
+                legend_labels = []
+                for dept_code, count in zip(dept_counts.index, dept_counts.values):
+                    full_name = df[df['الدائرة'] == dept_code]['الدائرة'].iloc[0]  # نفس الاسم بالعربي
+                    legend_labels.append(f"{full_name} | {dept_code} | {count} موظف")
+
 
                 fig_dept = go.Figure(data=[go.Pie(
                     labels=legend_labels,
