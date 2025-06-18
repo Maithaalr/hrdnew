@@ -56,7 +56,7 @@ if uploaded_file:
             if 'الدائرة' in df.columns:
                 dept_counts = df['الدائرة'].value_counts()
 
-                labels = dept_counts.index
+                labels = [f"{dept} | {count} موظف" for dept, count in zip(dept_counts.index, dept_counts.values)]
                 values = dept_counts.values
 
                 fig_dept = go.Figure(data=[go.Pie(
