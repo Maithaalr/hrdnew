@@ -50,35 +50,33 @@ if uploaded_file:
     tab1, tab2, tab3, tab4 = st.tabs([" نظرة عامة", " تحليلات بصرية", " البيانات المفقودة", " عرض البيانات"])
 
     with tab2:
-        st.markdown("###  التحليلات البصرية")
-        col3, _ = st.columns(2)
-        with col3:
-            if 'الدائرة' in df.columns:
-                dept_counts = df['الدائرة'].value_counts()
-                values = dept_counts.values
-                labels = dept_counts.index
+        st.markdown("### توزيع الموظفين حسب الجنس داخل كل دائرة")
 
-                # تجهيز النص داخل الرسم
-                text_labels = labels
+        if 'الدائرة' in df.columns and 'الجنس' in df.columns:
+            grouped = df.groupby(['الدائرة', 'الجنس']).size().reset_index(name='عدد')
+            total_per_dept = grouped.groupby('الدائرة')['عدد'].transform('sum')
+            grouped['النسبة'] = round((grouped['عدد'] / total_per_dept) * 100, 1)
+            grouped['label'] = grouped.apply(lambda row: f"{row['عدد']} | {row['النسبة']}%", axis=1)
 
-                # تجهيز النص في الشرح الجانبي
-                legend_text = [f"{df[df['الدائرة'] == code]['الدائرة'].iloc[0]} | {code} | {count} موظف"
-                               for code, count in zip(labels, values)]
+            fig_gender_per_dept = px.bar(
+                grouped,
+                x='الدائرة',
+                y='عدد',
+                color='الجنس',
+                text='label',
+                barmode='stack',
+                color_discrete_sequence=['#2F4156', '#C8D9E6']  # أزرق غامق + أزرق فاتح
+            )
 
-                fig = go.Figure(data=[go.Pie(
-                    labels=legend_text,
-                    values=values,
-                    text=text_labels,
-                    textinfo='text+percent',
-                    textposition='outside',
-                    marker=dict(colors=px.colors.sequential.Blues[::-1])
-                )])
+            fig_gender_per_dept.update_layout(
+                title='توزيع الموظفين حسب الجنس داخل كل دائرة',
+                title_x=0.5,
+                xaxis_tickangle=-45
+            )
 
-                fig.update_layout(
-                    title='نسبة الموظفين حسب الدائرة',
-                    title_x=0.5,
-                    legend_font_size=13,
-                    showlegend=True
-                )
+            fig_gender_per_dept.update_traces(
+                textposition='inside',
+                insidetextanchor='middle'
+            )
 
-                st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig_gender_per_dept, use_container_width=True)
