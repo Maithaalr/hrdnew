@@ -55,21 +55,24 @@ if uploaded_file:
         with col3:
             if 'الدائرة' in df.columns:
                 dept_counts = df['الدائرة'].value_counts()
-                sorted_depts = dept_counts.sort_values(ascending=False)
 
-                # استخدام تدرجات زرقاء من الغامق إلى الفاتح
-                color_scale = px.colors.sequential.Blues[::-1]
-                colors_custom = color_scale[:len(sorted_depts)]
-
-                labels = [f"{dept} | {count} موظف" for dept, count in zip(sorted_depts.index, sorted_depts.values)]
+                labels = dept_counts.index
+                values = dept_counts.values
 
                 fig_dept = go.Figure(data=[go.Pie(
                     labels=labels,
-                    values=sorted_depts.values,
+                    values=values,
                     hole=0.4,
-                    marker=dict(colors=colors_custom),
                     textinfo='label+percent',
-                    textposition='inside'
+                    textposition='outside',
+                    insidetextorientation='radial',
+                    marker=dict(colors=px.colors.sequential.Blues[::-1])
                 )])
-                fig_dept.update_layout(title='نسبة الموظفين حسب الدائرة', title_x=0.5)
+
+                fig_dept.update_layout(
+                    title='نسبة الموظفين حسب الدائرة',
+                    title_x=0.5,
+                    showlegend=True
+                )
+
                 st.plotly_chart(fig_dept, use_container_width=True)
