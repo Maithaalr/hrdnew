@@ -47,9 +47,9 @@ if uploaded_file:
     df.columns = df.columns.str.strip()
     df = df.loc[:, ~df.columns.duplicated()]
 
-    tab1, tab2, tab3, tab4 = st.tabs([" نظرة عامة", " تحليلات بصرية", " البيانات المفقودة", " عرض البيانات"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([" نظرة عامة", " تحليلات بصرية", " البيانات المفقودة", " عرض البيانات", " تحليل حسب الجنس"])
 
-    with tab2:
+    with tab5:
         st.markdown("### توزيع الموظفين حسب الجنس داخل كل دائرة")
 
         if 'الدائرة' in df.columns and 'الجنس' in df.columns:
@@ -65,7 +65,7 @@ if uploaded_file:
                 color='الجنس',
                 text='label',
                 barmode='stack',
-                color_discrete_sequence=['#2F4156', '#C8D9E6']  # أزرق غامق + أزرق فاتح
+                color_discrete_sequence=['#2F4156', '#C8D9E6']
             )
 
             fig_gender_per_dept.update_layout(
