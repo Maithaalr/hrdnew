@@ -56,14 +56,18 @@ if uploaded_file:
             if 'الدائرة' in df.columns:
                 dept_counts = df['الدائرة'].value_counts()
 
-                labels = [f"{dept} | {count} موظف" for dept, count in zip(dept_counts.index, dept_counts.values)]
-                values = dept_counts.values
+                # النص داخل الدائرة: فقط اسم الدائرة
+                text_values = dept_counts.index
+
+                # النص في الشرح الجانبي (Legend): اسم الدائرة + العدد
+                legend_labels = [f"{dept} | {count} موظف" for dept, count in zip(dept_counts.index, dept_counts.values)]
 
                 fig_dept = go.Figure(data=[go.Pie(
-                    labels=labels,
-                    values=values,
+                    labels=legend_labels,
+                    values=dept_counts.values,
                     hole=0.4,
-                    textinfo='label+percent',
+                    text=text_values,
+                    textinfo='text+percent',
                     textposition='outside',
                     insidetextorientation='radial',
                     marker=dict(colors=px.colors.sequential.Blues[::-1])
@@ -72,7 +76,8 @@ if uploaded_file:
                 fig_dept.update_layout(
                     title='نسبة الموظفين حسب الدائرة',
                     title_x=0.5,
-                    showlegend=True
+                    showlegend=True,
+                    legend_font_size=12
                 )
 
                 st.plotly_chart(fig_dept, use_container_width=True)
